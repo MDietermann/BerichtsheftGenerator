@@ -1,12 +1,14 @@
 mod cli;
 mod report_generator;
 
+use std::path::PathBuf;
+use std::process::{Command, Stdio};
+use std::io::{BufReader, BufRead};
 use clap::Parser;
 use clearscreen::clear;
 use cli::Cli;
 use cli::Commands;
 use report_generator::write_to_file;
-use std::process::Command;
 use tokio::time::error::Error;
 use walkdir::WalkDir;
 
@@ -88,6 +90,50 @@ fn get_commits(repo: String) {
 }
 
 fn install() {
-    _ = clear();
-    println!("Willkommen beim Berichtsheft Generator!")
+    // You would use your clear() function here
+    // _ = clear();
+    println!("Willkommen beim Berichtsheft Generator!");
+    
+    let project_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let scripts_path = project_path.join("scripts");
+    
+    // Use Stdio::piped to get a handle to the child process's output
+    let mut install_command = Command::new("sh")
+        .current_dir(scripts_path)
+        .arg("init.sh")
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("Failed to spawn installation script");
+
+    // Get the stdout and stderr handles
+    let stdout = install_command.stdout.take().expect("Failed to get stdout");
+    let stderr = install_command.stderr.take().expect("Failed to get stderr");
+    
+    // Create buffered readers to read the output lines
+    let stdout_reader = BufReader::new(stdout);
+    let stderr_reader = BufReader::new(stderr);
+
+    // Read and print stdout in real-time
+    stdout_reader.lines().for_each(|line| {
+        if let Ok(l) = line {
+            println!("{}", l);
+        }
+    });
+
+    // Read and print stderr in real-time
+    stderr_reader.lines().for_each(|line| {
+        if let Ok(l) = line {
+            eprintln!("{}", l);
+        }
+    });
+
+    // Wait for the command to finish and get the exit status
+    let status = install_command.wait().expect("Failed to wait on child process");
+
+    if status.success() {
+        println!("Installation completed successfully.");
+    } else {
+        eprintln!("Installation failed with exit code: {:?}", status.code());
+    }
 }
