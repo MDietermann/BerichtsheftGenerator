@@ -1,3 +1,5 @@
+use chrono::Date;
+use chrono::{DateTime, offset::Local};
 use clap::{
     Parser,
     ValueEnum,
@@ -5,8 +7,8 @@ use clap::{
     Args
 };
 
-use chrono::prelude::*;
 use std::string::String;
+use std::sync::LazyLock;
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum TimeEnum {
@@ -21,24 +23,28 @@ pub enum Commands {
     Install,
 
     /// Generate Document with Git Commits
-    GenerateCommits(GenerateCommitsArgs)
+    GenerateCommits(GenerateCommitsArgs),
+
+    /// Test Command for CLI input stream
+    Test,
 }
 
 const EMPTY: String = String::new();
+const RANGE_DEFAULT: LazyLock<String> = LazyLock::new(|| String::from("day"));
 
 #[derive(Args, Debug)]
 pub struct GenerateCommitsArgs {
-    /// Name of the Person to greed
+    /// Date range to check (day, week, month)
     #[arg(short, value_parser = clap::value_parser!(TimeEnum))]
-    pub time: TimeEnum,
+    pub date_range: TimeEnum,
 
-    /// Number of times to greed
-    #[arg(short, long, default_value_t = Local::now())]
-    pub date: DateTime<Local>, 
-
-    /// Owner of the Repository
+    /// Date that lies in the given date range Example: 2025-08-13
     #[arg(short, long)]
-    pub owner: String,
+    pub date: String, 
+
+    #[arg(short, long)]
+    /// Path to the Projects folder for the repositories to check
+    pub projects_path: String,
 
     /// Repository to check
     #[arg(short, long, default_value_t = String::from("all"))]
