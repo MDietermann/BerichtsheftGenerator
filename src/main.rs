@@ -1,28 +1,28 @@
 mod cli;
 mod report_generator;
+mod helper;
 
-use std::path::{PathBuf, Path};
-use std::process::{Command, Stdio};
-use std::io::{BufReader, BufRead};
-use clap::error::Result;
-use clap::Parser;
-use cli::Cli;
-use cli::Commands;
+use std::path::{ PathBuf, Path };
+use std::process::{ Command, Stdio };
+use std::io::{ BufReader, BufRead };
+use clap::{ error::Result, Parser };
+use cli::*;
 use report_generator::write_to_file;
 use clearscreen::clear;
-use std::thread;
-use std::sync::{Arc, Mutex};
+use std::{ env, thread };
+use std::sync::{ Arc, Mutex };
 
 use std::io::*;
 use tokio::time::error::Error;
 use walkdir::WalkDir;
-use chrono::{DateTime, Datelike, Local};
+use chrono::{ DateTime, Datelike, Local };
 
 use dotenv::dotenv;
-use std::env;
 
 use crate::cli::TimeEnum;
+use crate::helper::custom_cli::custom_cli_input;
 use crate::report_generator::collect_data;
+use crate::helper::user_data::UserData;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -32,29 +32,13 @@ async fn main() -> Result<(), Error> {
 
     dotenv().ok();
 
-    let token = env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN must be set");
+    // let token = env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN must be set");
 
     match cli.command {
         Commands::Install => {
             install();
         }
-        Commands::GenerateCommits(generate_commits_args) => {
-            if !Path::new("install.log").exists() {
-                install();
-            }
-            //let repo = generate_commits_args.repo;
-            //let commit_author = generate_commits_args.author;
-            //let projects_path = generate_commits_args.projects_path;
-            //let date = NaiveDate::parse_from_str("{}", &str::from(generate_commits_args.date));
-            //let range = generate_commits_args.date_range;
-//
-            //println!("Fetching commits for {}/{}", commit_author, repo);
-//
-            //get_commits(repo, projects_path, commit_author, range, date);
-
-
-        },
-        Commands::Test => {
+        Commands::GenerateCommits => {
             if !Path::new("install.log").exists() {
                 install();
             }
@@ -68,30 +52,16 @@ async fn main() -> Result<(), Error> {
                 println!("Invalid input! Exiting...");
                 std::process::exit(0);
             }
-        }
+         },
     };
 
     Ok(())
 }
 
-fn custom_cli_input(message: String) -> String {
-    print!("{}: ", message);
-    std::io::stdout().flush().expect("Failed to flush stdout");
-
-    let mut input: String = String::new();
-    std::io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read input");
-
-    println!("---------------");
-
-    input.trim().to_string()
-}
-
 fn get_all_commits(
     projects_path: String, 
     commit_author: String, 
-    range: TimeEnum, 
+    _range: TimeEnum, 
     date: DateTime<Local>
 ) {
     let mut repos = Vec::new();
@@ -107,7 +77,7 @@ fn get_all_commits(
             }
         }
     }
-
+    
     get_date_range(date);
 
     let mut buffer = String::new();
@@ -167,6 +137,7 @@ fn install() {
             if let Ok(l) = line {
                 // Lock the mutex to safely modify the log
                 let mut log = log_clone_stdout.lock().unwrap();
+                println!("{}",  &l);
                 *log = collect_data(&l, log.clone());
             }
         });
@@ -182,6 +153,7 @@ fn install() {
             if let Ok(l) = line {
                 // Lock the mutex to safely modify the log
                 let mut log = log_clone_stderr.lock().unwrap();
+                println!("{}",  &l);
                 *log = collect_data(&l, log.clone());
             }
         });

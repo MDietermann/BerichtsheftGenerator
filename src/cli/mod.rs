@@ -1,5 +1,3 @@
-use chrono::Date;
-use chrono::{DateTime, offset::Local};
 use clap::{
     Parser,
     ValueEnum,
@@ -8,7 +6,6 @@ use clap::{
 };
 
 use std::string::String;
-use std::sync::LazyLock;
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum TimeEnum {
@@ -23,14 +20,10 @@ pub enum Commands {
     Install,
 
     /// Generate Document with Git Commits
-    GenerateCommits(GenerateCommitsArgs),
-
-    /// Test Command for CLI input stream
-    Test,
+    GenerateCommits,
 }
 
 const EMPTY: String = String::new();
-const RANGE_DEFAULT: LazyLock<String> = LazyLock::new(|| String::from("day"));
 
 #[derive(Args, Debug)]
 pub struct GenerateCommitsArgs {
