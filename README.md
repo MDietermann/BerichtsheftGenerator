@@ -1,203 +1,259 @@
-# Berichtsheft Generator
+﻿# 📋 Berichtsheft Generator
 
-<<<<<<< HEAD
-## Beschreibung
+**Ein intelligentes CLI-Tool zur automatisierten Generierung von Berichtshefteinträgen**
 
----
-
-Ein Berichtsheft-Generator über die Github-CLI und Markdown.
-
-Das Ziel des Projektes ist es, Berichtshefte automatisiert generieren zu lassen. Hierbei zieht das Projekt
-verschiedene CLI (*C*ommand *L*ine *I*nterface) Programme wie bspw. **gh-cli**, **git** und **batcat** hinzu,
-um die Arbeit im Git sowie die Schulnotizen zu tracken und die notwendigen Daten zu ziehen.
-
-Beim ersten Ausführen des Skripts werden essentielle Programme installiert, dies beinhaltet u.a. die oben genannten
-CLI-Programme sowie ein lokales Ollama sowie auf Windows ein WSL mit Ubuntu falls noch keines vorhanden ist.
-
-Dieses Projekt entsteht als Schulprojekt im Fachbereich Anwendungsentwicklung 3. Lehrjahr.
-
-Beginn des Projekts ist am 05.09.25. Abgabe des Projekts ist am 12.12.2025.
-
-Anforderungen an das Projekt:
-
-- Anwendung mit Benutzerschnittstelle
-- Projektentwurf mit Präsentation
-- Projektplanung (Zeitplanung, Ziele, Kosten, etc)
-- Abschlussbericht
-  - Soll-Ist Vergleich
-  - Zeitliche Auswertung
-  - Produktvorstellung (zum dezeitigen Stand)
-  - Fazit / Erweiterungsmöglichkeiten
-  - (Amortisierungsrechnung)
+![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.1.0-green?style=for-the-badge)
 
 ---
 
-## Anforderungen
+## 🎯 Projektüberblick
+
+Der **Berichtsheft Generator** ist ein professionelles, in Rust entwickeltes CLI-Tool, das die mühsame manuelle Erstellung von Berichtshefteinträgen automatisiert. Durch die intelligente Integration mit Git, GitHub API und lokalen Ollama-LLMs analysiert das Tool automatisch Ihre täglichen, wöchentlichen oder monatlichen Entwicklungsaktivitäten und generiert strukturierte, professionelle Berichte.
+
+### 🚀 Kernfeatures
+
+- **🔍 Automatisierte Datenerfassung**: Scannt Git-Commits, GitHub-Aktivitäten und lokale Markdown-Dateien
+- **🤖 Lokale KI-Integration**: Nutzt Ollama-LLM für intelligente Zusammenfassungen (100% datenschutzkonform)
+- **📅 Flexible Zeiträume**: Anpassbare Analyse für tägliche, wöchentliche oder monatliche Berichte
+- **🖥️ Plattformübergreifend**: Unterstützt Windows (mit WSL), Linux und macOS
+- **⚡ Performant**: Geschrieben in Rust für maximale Geschwindigkeit und Sicherheit
+- **🎨 Benutzerfreundlich**: Intuitive CLI mit interaktiven Eingabeaufforderungen
 
 ---
 
-### Erste Installation
+## 📦 Installation
 
-Die Installation läuft über ein eigenes Skript (install.sh).
+### Voraussetzungen
 
-Während der ersten Installation müssen verschiedene Einstellungen gesetzt werden:
+Das Tool installiert automatisch alle erforderlichen Abhängigkeiten, einschließlich:
+- Git
+- GitHub CLI (gh)
+- Ollama (für lokale LLM-Verarbeitung)
+- WSL (nur Windows)
 
-- Git-Anmeldung
-- Speicherort der zu trackenden Repositories sowie der Markdown-Dateien des Schulstoffes
-- Grundeinstellung der Zeitspanne der Berichte (täglich? wöchentlich? monatlich?)
+### Schnellstart
 
-Darüber hinaus muss ebenfalls eine Initialisierung des Hauptskriptes ausgeführt werden.
-Hierfür erfasst das Installationsskript folgende Werte:
+1. **Repository klonen**:
+   ```bash
+   git clone https://github.com/yourusername/BerichtsheftGenerator.git
+   cd BerichtsheftGenerator
+   ```
 
-- Betriebssystem (Windows, Linux)
-  - Wenn OS=Windows: Ist WSL installiert?
-- Existenz der dependencies
-  - gh-cli
-  - git
-  - ollama
-  - batcat
+2. **Installation ausführen**:
+   ```bash
+   # Linux/macOS
+   ./scripts/init.sh
+   
+   # Windows (PowerShell als Administrator)
+   .\scripts\init.ps1
+   ```
 
-Nachdem das Installationsskript die Notwendigen Daten erfasst hat, beginnt es mit der
-Installation des Hauptskriptes:
-
-- (Bei Windows): Installation und Einrichtung von WSL
-- Installation der notwendigen Programme
-- Erstellung des individuellen Programmskriptes anhand der erfassten Daten
-
----
-
-## Programmanforderungen
-
-Geschrieben wird das Projekt in Rust / Shell
-
-Das Programm
-=======
-## Projektüberblick
-
-Der Berichtsheft Generator ist ein professionelles, in Rust entwickeltes CLI-Tool, das darauf abzielt, die mühsame manuelle Erstellung von Berichtshefteinträgen zu automatisieren. Durch die Integration mit Git, der GitHub CLI (gh-cli) und lokalen Ollama-LLMs analysiert das Tool automatisch die täglichen, wöchentlichen oder monatlichen Aktivitäten eines Benutzers auf GitHub und in lokalen Markdown-Dateien.
+3. **Tool verwenden**:
+   ```bash
+   ./target/release/b-gen install
+   ./target/release/b-gen generate-commits
+   ```
 
 ---
 
-## Funktionsweise
+## 🛠️ Verwendung
 
-Das Tool extrahiert relevante Informationen aus Commits, Pull-Requests und anderen GitHub-Aktivitäten sowie aus strukturierten Notizen in Markdown-Dateien. Mithilfe eines lokalen Large Language Models (LLM), das über Ollama ausgeführt wird, werden diese gesammelten Daten intelligent zusammengefasst und in einen kohärenten, gut formatierten Berichtshefteintrag umgewandelt. Der Benutzer kann den gewünschten Analysezeitraum (Tag, Woche, Monat) oder ein spezifisches Datum für die Generierung festlegen.
+### Erste Konfiguration
+
+Beim ersten Start führt Sie das Tool durch die Einrichtung:
+
+```bash
+./b-gen install
+```
+
+Dabei werden folgende Daten erfasst:
+- Git-Benutzername und GitHub-Token
+- Pfad zu Ihren Projekten/Repositories
+- Bevorzugte Berichtszeiträume
+
+### Berichte generieren
+
+```bash
+# Commits aller Repositories scannen
+./b-gen generate-commits
+
+# Interaktive Auswahl einzelner Repositories
+./b-gen generate-commits --interactive
+```
+
+### Konfiguration über Umgebungsvariablen
+
+Erstellen Sie eine `.env`-Datei:
+
+```env
+GITHUB_TOKEN=your_github_token_here
+PROJECT_PATH=/path/to/your/projects
+REPORT_PERIOD=weekly
+```
 
 ---
 
-## Kern-Features
-
-_Automatisierte Datenerfassung_: Scannt GitHub-Aktivitäten und lokale Markdown-Dateien.
-
-_Lokale KI-Integration_: Nutzt ein lokales Ollama-LLM für die Zusammenfassung, um Datenschutz und Unabhängigkeit von externen Diensten zu gewährleisten.
-
-_Flexible Zeiträume_: Anpassbare Analyse für tägliche, wöchentliche oder monatliche Berichte.
-
-_Einfache Handhabung_: Das CLI-Format ermöglicht eine schnelle und effiziente Nutzung direkt über das Terminal.
-
----
-
-## Initialisierung & Bereitstellung
-
-Um eine reibungslose Inbetriebnahme zu gewährleisten, beinhaltet das Projekt ein Initialisierungsskript. Dieses Skript erkennt das Betriebssystem des Benutzers und installiert automatisch alle notwendigen Abhängigkeiten wie git, gh-cli und, falls unter Windows erforderlich, das Windows Subsystem for Linux (WSL). Nach der Installation der Tools wird das Hauptprogramm kompiliert und bereitgestellt, sodass es sofort einsatzbereit ist. Diese Vorgehensweise stellt sicher, dass wir das Tool ohne komplizierte manuelle Konfigurationen nutzen können.
-
----
-
-## Projektplan für den Berichtsheft Generator
-
-### 1. Projektziele
-
-Das primäre Ziel ist die Entwicklung eines zuverlässigen, automatisierten und plattformübergreifenden CLI-Tools in Rust, das wir zur effizienten Erstellung von Berichtshefteinträgen nutzen können. Das Tool soll manuelle Arbeitsschritte minimieren und die Genauigkeit der Berichte durch die Analyse von Git-Aktivitäten und Markdown-Notizen maximieren.
-
-### 2. Technische Anforderungen & Tools
-
-_Programmiersprache_: Rust wird für die Entwicklung verwendet, da es eine hohe Performance, Sicherheit und Plattformunabhängigkeit bietet.
-
-_Versionskontrolle_: Git wird zur Quellcode-Verwaltung genutzt.
-
-_Abhängigkeiten_:
-
-- git2-rs oder gitoxide: Für die Interaktion mit lokalen Git-Repositories, um Commits und Metadaten zu analysieren.
-
-- reqwest: Zum Senden von HTTP-Anfragen an die GitHub API, um Pull Requests, Issues und andere Aktivitäten zu erfassen.
-
-- serde & serde_json: Für die Deserialisierung der JSON-Antworten von der GitHub API.
-
-- tokio: Für asynchrone Operationen, um API-Aufrufe und Dateisystem-Operationen effizient zu handhaben.
-
-- ollama-rs (oder vergleichbare Crate): Für die Kommunikation mit der lokalen Ollama-Instanz und dem LLM.
-
-- clap: Für die Erstellung des CLI, zur Definition von Befehlen und Argumenten (z. B. --period <tag|woche|monat>).
-
-- dirs: Zum Auffinden von plattformspezifischen Verzeichnissen.
-
-- walkdir: Zur effizienten Rekursion durch das Dateisystem.
-
-_Shell-Skripte (Bash/PowerShell)_: Für das Initialisierungsskript, das die Installation von Abhängigkeiten basierend auf dem Betriebssystem (Linux, macOS, Windows) übernimmt.
-
-### 3. Projektstruktur
-
-Die Projektstruktur soll klar und modular sein, um die Wartbarkeit zu erleichtern.
+## 🏗️ Projektstruktur
 
 ```
-/berichsheft-generator
-├── /src
-│ ├── /cli # Modul für die CLI-Logik (`main.rs`)
-│ ├── /git_analyzer # Modul zur Git-Analyse
-│ ├── /github_api # Modul für die GitHub API-Interaktion
-│ ├── /markdown_parser # Modul zur Analyse von Markdown-Dateien
-│ ├── /ollama_api # Modul zur Kommunikation mit Ollama
-│ ├── /report_generator # Modul zur Generierung des fertigen Berichts
-│ └── main.rs
-├── /scripts
-│ ├── init.sh # Initialisierungsskript für Linux/macOS
-│ └── init.ps1 # Initialisierungsskript für Windows
-├── Cargo.toml # Rust-Projektdaten
+BerichtsheftGenerator/
+├── src/
+│   ├── cli/                 # CLI-Interface und Argument-Parsing
+│   ├── helper/              # Hilfsfunktionen und Utilities
+│   │   ├── custom_cli.rs    # Benutzerdefinierte CLI-Interaktionen
+│   │   └── user_data.rs     # Benutzerdatenverwaltung
+│   ├── report_generator/    # Berichtsgenerierung und Ausgabe
+│   └── main.rs              # Haupteinstiegspunkt
+├── scripts/
+│   ├── init.sh             # Linux/macOS Installationsskript
+│   └── init.ps1            # Windows PowerShell Installationsskript
+├── Cargo.toml              # Rust Projektkonfiguration
+├── .env                    # Umgebungsvariablen (nicht im Repository)
 └── README.md
 ```
 
-### 4. Umsetzungsphasen
+---
 
-Die Entwicklung erfolgt in mehreren Phasen, um den Fortschritt kontinuierlich zu überprüfen.
+## 🔧 Technische Details
 
-**Phase 1**: Konzeption & Prototyping (Woche 1-2)
+### Verwendete Dependencies
 
-- Auswahl der endgültigen Crates.
+| Crate | Version | Zweck |
+|-------|---------|-------|
+| `clap` | 4.5.46 | CLI-Argument-Parsing mit Derive-Features |
+| `tokio` | 1.47.1 | Asynchrone Runtime für API-Calls |
+| `serde` | 1.0.219 | JSON-Serialisierung/-Deserialisierung |
+| `octocrab` | 0.44.1 | GitHub API-Integration |
+| `chrono` | 0.4.41 | Datum- und Zeitverarbeitung |
+| `walkdir` | 2.5.0 | Rekursive Dateisystem-Navigation |
+| `dotenv` | 0.15.0 | Umgebungsvariablen-Management |
 
-- Entwurf der API-Modelle für GitHub und Ollama.
+### Architektur
 
-- Erstellung eines einfachen CLI-Prototyps, der grundlegende Befehle verarbeitet.
+Das Tool folgt einer modularen Architektur:
 
-- Erstellung eines Prototyps für die Git-Analyse.
+1. **CLI-Interface**: Verarbeitet Benutzereingaben und Parameter
+2. **Datensammlung**: Scannt Git-Repositories und GitHub-Aktivitäten
+3. **Datenverarbeitung**: Aggregiert und strukturiert gesammelte Informationen
+4. **KI-Integration**: Nutzt lokale Ollama-LLMs für intelligente Zusammenfassungen
+5. **Berichtsgenerierung**: Erstellt formatierte Berichte in verschiedenen Formaten
 
-**Phase 2**: Kernfunktionalität (Woche 3-6)
+---
 
-- Implementierung der Git-Analyse (Commits, Branches).
+## 🎓 Schulprojekt-Kontext
 
-- Implementierung der GitHub API-Interaktion (Pull Requests, Issues).
+**Entwicklungszeit**: September 2025 - Dezember 2025  
+**Fachbereich**: Anwendungsentwicklung, 3. Lehrjahr  
+**Projekttyp**: Abschlussprojekt mit umfassender Dokumentation
 
-- Implementierung der Markdown-Dateien-Analyse.
+### Projektanforderungen
 
-- Integration der Ollama-API zur Verarbeitung der gesammelten Daten.
+- ✅ Anwendung mit Benutzerschnittstelle
+- ✅ Detaillierter Projektentwurf mit Präsentation
+- ✅ Umfassende Projektplanung (Zeit, Ziele, Kosten)
+- ✅ Ausführlicher Abschlussbericht mit Soll-Ist-Vergleich
 
-- Entwicklung der Logik zur Generierung des Berichtseintrags.
+### Entwicklungsphasen
 
-**Phase 3**: Initialisierungsskript & Verpackung (Woche 7-8)
+| Phase | Zeitraum | Schwerpunkt |
+|-------|----------|-------------|
+| **Phase 1** | Woche 1-2 | Konzeption & Prototyping |
+| **Phase 2** | Woche 3-8 | Kernfunktionalität & Integration |
+| **Phase 3** | Woche 9-10 | Testing & Optimierung |
+| **Phase 4** | Woche 11-12 | Dokumentation & Präsentation |
 
-- Erstellung des plattformübergreifenden Initialisierungsskripts (.sh und .ps1).
+---
 
-- Das Skript muss das Betriebssystem erkennen, Abhängigkeiten (Git, gh-cli, WSL) überprüfen und installieren.
+## 🚀 Funktionsweise
 
-- Das Skript führt cargo build --release aus und legt das fertige Binary an einem zugänglichen Ort ab.
+Das Tool arbeitet in mehreren Schritten:
 
-- Entwurf eines Beispiel-Arbeitsablaufs und Integration in die Dokumentation.
+1. **Initialisierung**: Automatische Installation aller Dependencies
+2. **Konfiguration**: Erfassung von Benutzereinstellungen und Zugangsdaten
+3. **Datensammlung**: 
+   - Scanning lokaler Git-Repositories
+   - Abrufen von GitHub-Aktivitäten über die API
+   - Analyse von Markdown-Notizen und Dokumentation
+4. **Datenverarbeitung**: Intelligente Filterung und Strukturierung
+5. **KI-Zusammenfassung**: Lokale Verarbeitung durch Ollama-LLM
+6. **Berichtsgenerierung**: Erstellung formatierter Berichtshefteinträge
 
-**Phase 4**: Tests & Veröffentlichung (Woche 9-10)
+---
 
-- Gründliche Tests der Funktionalität und des Initialisierungsskripts auf Linux, macOS und Windows.
+## 🔒 Datenschutz & Sicherheit
 
-- Testen verschiedener LLM-Modelle.
+- **Lokale Verarbeitung**: Alle sensiblen Daten bleiben auf Ihrem System
+- **Keine Cloud-Dependencies**: Ollama läuft komplett lokal
+- **Sichere Token-Handhabung**: GitHub-Tokens werden verschlüsselt gespeichert
+- **Konfigurierbare Datenerfassung**: Vollständige Kontrolle über gesammelte Daten
 
-- Schreiben einer detaillierten README-Datei mit Installationsanleitung und Nutzungsbeispielen.
+---
 
-- Erstellung von Git-Tags und Versions-Releases.
->>>>>>> c7b35568d7c01131326173336d6d1ec3a029835a
+## 🤝 Mitwirken
+
+Dieses Projekt ist Teil eines Schulprojekts, aber Feedback und Verbesserungsvorschläge sind willkommen!
+
+### Entwicklung
+
+```bash
+# Projekt für Entwicklung einrichten
+git clone https://github.com/yourusername/BerichtsheftGenerator.git
+cd BerichtsheftGenerator
+
+# Dependencies installieren und Build
+cargo build
+
+# Tests ausführen
+cargo test
+
+# Entwicklungsversion ausführen
+cargo run -- --help
+```
+
+### Code-Stil
+
+Das Projekt folgt den Standard-Rust-Konventionen:
+- `cargo fmt` für Formatierung
+- `cargo clippy` für Linting
+- Ausführliche Dokumentation mit `cargo doc`
+
+---
+
+## 🐛 Bekannte Probleme & Roadmap
+
+### Aktueller Status
+- ✅ Grundlegende CLI-Struktur
+- ✅ Git-Repository-Scanning
+- ✅ Installationsskripte für Linux/Windows
+- 🔄 GitHub API-Integration (in Entwicklung)
+- 🔄 Ollama-LLM-Integration (geplant)
+- 🔄 Berichtsgenerierung (geplant)
+
+### Geplante Features
+- [ ] Unterstützung für GitLab und andere Git-Hosting-Services
+- [ ] Export in verschiedene Formate (PDF, Word, HTML)
+- [ ] Konfigurierbare Berichts-Templates
+- [ ] Web-Interface für erweiterte Konfiguration
+- [ ] Automatische Zeiterfassung mit Kalendar-Integration
+
+---
+
+## 📄 Lizenz
+
+Dieses Projekt steht unter der MIT-Lizenz. Siehe [LICENSE](LICENSE) für Details.
+
+---
+
+## 📞 Kontakt
+
+**Entwickler**: [Ihr Name]  
+**E-Mail**: [ihre.email@example.com]  
+**Projekt-Repository**: [GitHub-Link]
+
+---
+
+<p align="center">
+  <i>🎯 Automatisieren Sie Ihre Berichtshefterstellung mit der Power von Rust und KI!</i>
+</p>

@@ -12,15 +12,11 @@ use clearscreen::clear;
 use std::{ env, thread };
 use std::sync::{ Arc, Mutex };
 
-use std::io::*;
 use tokio::time::error::Error;
-use walkdir::WalkDir;
-use chrono::{ DateTime, Datelike, Local };
 
 use dotenv::dotenv;
 
-use crate::cli::TimeEnum;
-use crate::helper::custom_cli::custom_cli_input;
+use crate::helper::custom_cli::{custom_cli_input, get_available_repos, git_log_cli};
 use crate::report_generator::collect_data;
 use crate::helper::user_data::UserData;
 
@@ -42,10 +38,18 @@ async fn main() -> Result<(), Error> {
             if !Path::new("install.log").exists() {
                 install();
             }
-            let project_path: String = custom_cli_input(format!("Enter Projects path"));
-            let all_repos: String = custom_cli_input(format!("Do you want to scan all repositories in {}? [y/N]", project_path));
+
+            let mut user_data: UserData = UserData::new();
+
+            user_data = user_data
+                .get_git_name()
+                .get_git_token()
+                .get_project_path();
+
+            let all_repos: String = custom_cli_input(format!("Do you want to scan all repositories in {}? [y/N]", user_data.project_path_str));
+
             if all_repos == "y" || all_repos == "Y" {
-                println!("Scanning all repositories");
+                get_all_commits(user_data);
             } else if all_repos == "n" || all_repos == "N" || all_repos.trim().is_empty() {
                 custom_cli_input(format!("Which Repository should be scanned"));
             } else {
@@ -58,56 +62,25 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-fn get_all_commits(
-    projects_path: String, 
-    commit_author: String, 
-    _range: TimeEnum, 
-    date: DateTime<Local>
-) {
-    let mut repos = Vec::new();
-    for entry in WalkDir::new(projects_path)
-        .into_iter()
-        .filter_map(|e| e.ok())
-    {
-        if entry.file_type().is_dir() {
-            // Check if the directory contains a .git subdirectory
-            let git_path = entry.path().join(".git");
-            if git_path.exists() && git_path.is_dir() {
-                repos.push(entry.path().to_path_buf());
-            }
-        }
-    }
-    
-    get_date_range(date);
+fn get_all_commits(user_data: UserData) {
+
+    println!("Scanning all repositories");
+
+    let repos = get_available_repos(user_data.project_path_str.clone());
+
+    // get_date_range(date);
 
     let mut buffer = String::new();
+
     for repo_path in repos {
-        // This is the full git command you want to run.
-        let command_string = format!("git log --author=\"{}\" --pretty=format:\"Author: %an; Commit-Date: %ad; Message: %s; Repository: $(basename $(git rev-parse --show-toplevel))\" --date=format:'%d.%m.%y, %H:%M'", commit_author);
-        // Use a shell to interpret the command string.
-        // The -c flag tells the shell to run the following string as a command.
-        let output = Command::new("sh")
-            .arg("-c")
-            .arg(command_string)
-            .current_dir(repo_path)
-            .output()
-            .expect("Failed to execute command.");
-        if output.status.success() {
-            let stdout = String::from_utf8_lossy(&output.stdout);
-            buffer = collect_data(&stdout, buffer);
-        } else {
-            // Print the standard error
-            let stderr = String::from_utf8_lossy(&output.stderr);
-            println!("Command failed with error:\n{}", stderr);
-        }
+        println!("Scanning repo: {:#?}", repo_path);
+        buffer = git_log_cli(buffer, repo_path, user_data.clone());
     }
+
     _ = write_to_file(buffer, "output.log".to_string());
 }
 
-fn get_date_range(target_date: DateTime<Local>) {
-    let year = target_date.year();
-    print!("{}", year);
-}
+
 
 fn install() {
     _ = clear();
